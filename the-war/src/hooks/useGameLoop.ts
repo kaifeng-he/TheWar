@@ -332,7 +332,7 @@ export function useGameLoop(factionConfigs: FactionConfig[], developmentSpeed: n
                     // Find nearest refinery
                     let nearestRefinery: Building | null = null;
                     let minDist = Infinity;
-                    newState.buildings.forEach(b => {
+                    for (const b of newState.buildings) {
                         if (b.factionId === unit.factionId && b.type === 'refinery' && !b.isConstructing) {
                             const dx = b.position.x - unit.position.x;
                             const dy = b.position.y - unit.position.y;
@@ -342,7 +342,7 @@ export function useGameLoop(factionConfigs: FactionConfig[], developmentSpeed: n
                                 nearestRefinery = b;
                             }
                         }
-                    });
+                    }
 
                     if (nearestRefinery) {
                       unit.state = 'returning_resources';
@@ -355,7 +355,7 @@ export function useGameLoop(factionConfigs: FactionConfig[], developmentSpeed: n
               // Find nearest refinery again to be safe
               let nearestRefinery: Building | null = null;
               let minDist = Infinity;
-              newState.buildings.forEach(b => {
+              for (const b of newState.buildings) {
                   if (b.factionId === unit.factionId && b.type === 'refinery' && !b.isConstructing) {
                       const dx = b.position.x - unit.position.x;
                       const dy = b.position.y - unit.position.y;
@@ -365,7 +365,7 @@ export function useGameLoop(factionConfigs: FactionConfig[], developmentSpeed: n
                           nearestRefinery = b;
                       }
                   }
-              });
+              }
 
               if (nearestRefinery) {
                 const base = nearestRefinery as Building;
@@ -397,9 +397,9 @@ export function useGameLoop(factionConfigs: FactionConfig[], developmentSpeed: n
             
             let nearestEnemy: Unit | Building | null = null;
             let minDist = range;
-            
+
             // Search enemies
-            newState.units.forEach(u => {
+            for (const u of newState.units) {
                 if (u.factionId !== b.factionId && u.hp > 0) {
                     const dist = Math.sqrt(Math.pow(u.position.x - b.position.x, 2) + Math.pow(u.position.y - b.position.y, 2));
                     if (dist < minDist) {
@@ -407,11 +407,11 @@ export function useGameLoop(factionConfigs: FactionConfig[], developmentSpeed: n
                         nearestEnemy = u;
                     }
                 }
-            });
-            
+            }
+
             // If no enemy unit, search enemy buildings
             if (!nearestEnemy) {
-                newState.buildings.forEach(ob => {
+                for (const ob of newState.buildings) {
                     if (ob.factionId !== b.factionId && ob.hp > 0) {
                         const dist = Math.sqrt(Math.pow(ob.position.x - b.position.x, 2) + Math.pow(ob.position.y - b.position.y, 2));
                         if (dist < minDist) {
@@ -419,9 +419,8 @@ export function useGameLoop(factionConfigs: FactionConfig[], developmentSpeed: n
                             nearestEnemy = ob;
                         }
                     }
-                });
-            }
-            
+                }
+            }            
             if (nearestEnemy) {
                 const attackCooldown = 200 / devSpeed;
                 const now = performance.now();
@@ -483,7 +482,7 @@ export function useGameLoop(factionConfigs: FactionConfig[], developmentSpeed: n
                 }
             }
 
-            newState.units.forEach(u => {
+            for (const u of newState.units) {
               if (u.factionId !== unit.factionId && u.hp > 0) {
                 const dx = u.position.x - unit.position.x;
                 const dy = u.position.y - unit.position.y;
@@ -493,7 +492,7 @@ export function useGameLoop(factionConfigs: FactionConfig[], developmentSpeed: n
                   nearestEnemy = u;
                 }
               }
-            });
+            }
 
             if (nearestEnemy) {
               return { ...unit, state: 'attacking', targetEntityId: (nearestEnemy as Unit).id, targetPosition: (nearestEnemy as Unit).position };
@@ -666,7 +665,7 @@ export function useGameLoop(factionConfigs: FactionConfig[], developmentSpeed: n
             let globalNearestTarget: Unit | Building | null = null;
             let globalMinDist = Infinity;
 
-            [...newState.units, ...newState.buildings].forEach((e: Unit | Building) => {
+            for (const e of [...newState.units, ...newState.buildings]) {
                 if (e.factionId !== factionId && e.hp > 0) {
                     const dist = Math.hypot(e.position.x - cc.position.x, e.position.y - cc.position.y);
                     if (dist < globalMinDist) {
@@ -674,16 +673,16 @@ export function useGameLoop(factionConfigs: FactionConfig[], developmentSpeed: n
                         globalNearestTarget = e;
                     }
                 }
-            });
+            }
 
             if (globalNearestTarget) {
                 const target = globalNearestTarget;
-                idleCombatUnits.forEach(u => {
+                for (const u of idleCombatUnits) {
                   u.state = 'attacking';
                   u.targetEntityId = target.id;
                   u.targetPosition = target.position;
                   u.destination = target.position;
-                });
+                }
             }
           });
         }
